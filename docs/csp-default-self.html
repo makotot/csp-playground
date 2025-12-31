@@ -34,6 +34,15 @@
             border-radius: 3px;
             font-family: 'Courier New', monospace;
         }
+        .csp-policy-code {
+            background-color: #fff3cd;
+            border: 2px solid #ff9800;
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: block;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+        }
         .back-link {
             display: inline-block;
             margin-top: 20px;
@@ -50,7 +59,7 @@
 
     <div class="status-box">
         <h2>CSPポリシー</h2>
-        <code>Content-Security-Policy: default-src 'self'</code>
+        <code class="csp-policy-code">Content-Security-Policy: default-src 'self'</code>
         <p style="margin-top: 10px;">
             このページでは同一オリジン（'self'）からのリソースのみ許可されます。<br>
             インラインスクリプトとインラインスタイルは<strong>ブロック</strong>されます。

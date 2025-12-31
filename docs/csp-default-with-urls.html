@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com">
+    <title>CSP - default-src with URL Patterns テスト</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .status-box {
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .error {
+            background-color: #ffebee;
+            border-left: 4px solid #f44336;
+        }
+        .success {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4CAF50;
+        }
+        .warning {
+            background-color: #fff3e0;
+            border-left: 4px solid #ff9800;
+        }
+        code {
+            background-color: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            display: inline-block;
+            word-break: break-all;
+        }
+        .code-block {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #2196F3;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        ul, ol {
+            line-height: 1.6;
+        }
+        .pattern-example {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #e3f2fd;
+            border-left: 3px solid #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔒 default-src with URL Patterns テスト</h1>
+
+    <div class="status-box">
+        <h2>CSPポリシー</h2>
+        <div class="code-block">
+            <code>Content-Security-Policy: default-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com https://fonts.gstatic.com</code>
+        </div>
+        <p style="margin-top: 15px;">
+            このページでは同一オリジン（'self'）に加えて、特定の外部URLからのリソース読み込みが許可されます。
+        </p>
+    </div>
+
+    <div class="status-box success">
+        <h3>✅ 外部フォントのテスト</h3>
+        <p style="font-family: 'Roboto', sans-serif; font-size: 18px;">
+            このテキストはGoogle Fontsの「Roboto」フォントで表示されています。<br>
+            フォントが正しく読み込まれていれば、CSPが期待通りに動作しています。
+        </p>
+        <p style="font-size: 14px; color: #666; margin-top: 10px;">
+            許可されたURL: <code>https://fonts.googleapis.com</code> と <code>https://fonts.gstatic.com</code>
+        </p>
+    </div>
+
+    <div class="status-box">
+        <h3>📋 URL パターンの例</h3>
+        <p>以下は様々なURLパターンの使用例です：</p>
+
+        <div class="pattern-example">
+            <strong>1. 特定のドメインを許可</strong><br>
+            <code>default-src 'self' https://cdn.example.com</code><br>
+            <small>指定したドメインからのリソース読み込みのみ許可</small>
+        </div>
+
+        <div class="pattern-example">
+            <strong>2. ワイルドカードでサブドメインを許可</strong><br>
+            <code>default-src 'self' https://*.example.com</code><br>
+            <small>example.comのすべてのサブドメインを許可（api.example.com、cdn.example.com など）</small>
+        </div>
+
+        <div class="pattern-example">
+            <strong>3. すべてのHTTPSを許可</strong><br>
+            <code>default-src 'self' https:</code><br>
+            <small>すべてのHTTPSプロトコルのURLを許可（セキュリティ上注意が必要）</small>
+        </div>
+
+        <div class="pattern-example">
+            <strong>4. 複数のドメインを許可</strong><br>
+            <code>default-src 'self' https://cdn1.example.com https://cdn2.example.com</code><br>
+            <small>複数の異なるドメインを個別に指定</small>
+        </div>
+
+        <div class="pattern-example">
+            <strong>5. ポート番号を指定</strong><br>
+            <code>default-src 'self' https://example.com:8443</code><br>
+            <small>特定のポート番号を持つURLのみ許可</small>
+        </div>
+
+        <div class="pattern-example">
+            <strong>6. パスを指定</strong><br>
+            <code>default-src 'self' https://cdn.example.com/assets/</code><br>
+            <small>特定のパス配下のリソースのみ許可</small>
+        </div>
+    </div>
+
+    <div class="status-box">
+        <h3>🎯 このページで許可されているソース</h3>
+        <ul>
+            <li><code>'self'</code> - 同一オリジンのリソース</li>
+            <li><code>https://cdn.jsdelivr.net</code> - jsDelivrCDN（JavaScriptライブラリ用）</li>
+            <li><code>https://fonts.googleapis.com</code> - Google Fonts CSS</li>
+            <li><code>https://fonts.gstatic.com</code> - Google Fontsのフォントファイル</li>
+        </ul>
+    </div>
+
+    <div class="status-box error">
+        <h3>❌ ブロックされるもの</h3>
+        <ul>
+            <li>インラインスクリプト（'unsafe-inline'が指定されていない）</li>
+            <li>許可リストに含まれていない外部ドメインのリソース</li>
+            <li>HTTPプロトコル（HTTPSのみ許可）</li>
+            <li>data: URI スキーム（明示的に許可されていない場合）</li>
+        </ul>
+    </div>
+
+    <div class="status-box warning">
+        <h3>⚠️ セキュリティ上の注意点</h3>
+        <ul>
+            <li><strong>信頼できるドメインのみ</strong>を許可リストに追加してください</li>
+            <li><strong>ワイルドカード（*）の使用は慎重に</strong>：広範囲のサブドメインを許可すると攻撃面が増加します</li>
+            <li><strong>https: の使用は避ける</strong>：すべてのHTTPS URLを許可するのは推奨されません</li>
+            <li><strong>最小権限の原則</strong>：必要最小限のドメインのみを許可します</li>
+            <li><strong>CDNを使用する場合</strong>：SRI (Subresource Integrity) の使用も検討してください</li>
+        </ul>
+    </div>
+
+    <div class="status-box">
+        <h3>🔍 確認方法</h3>
+        <ol>
+            <li>ブラウザの開発者ツールを開く（F12キー）</li>
+            <li>Consoleタブを確認</li>
+            <li>CSP違反のエラーがないか確認</li>
+            <li>Networkタブで外部リソースが正しく読み込まれているか確認</li>
+        </ol>
+        <p style="margin-top: 10px;">
+            <strong>期待される動作：</strong><br>
+            Google Fontsが正常に読み込まれ、フォントが適用されています。
+        </p>
+    </div>
+
+    <div class="status-box">
+        <h3>📚 より詳細なディレクティブ</h3>
+        <p>
+            <code>default-src</code>はすべてのリソースタイプに適用されますが、
+            より細かく制御したい場合は個別のディレクティブを使用できます：
+        </p>
+        <ul>
+            <li><code>script-src</code> - JavaScriptの読み込み元を制御</li>
+            <li><code>style-src</code> - CSSの読み込み元を制御</li>
+            <li><code>img-src</code> - 画像の読み込み元を制御</li>
+            <li><code>font-src</code> - フォントの読み込み元を制御</li>
+            <li><code>connect-src</code> - fetch, XHR, WebSocketの接続先を制御</li>
+        </ul>
+        <p style="margin-top: 10px;">
+            例：<code>default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com</code>
+        </p>
+    </div>
+
+    <a href="index.html" class="back-link">← トップページに戻る</a>
+
+    <!-- このインラインスクリプトはブロックされる -->
+    <script>
+        console.log('このメッセージは表示されません（CSPによってブロック）');
+        alert('インラインスクリプトが実行された場合、CSPが正しく機能していません');
+    </script>
+</body>
+</html>

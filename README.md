@@ -30,7 +30,7 @@ GitHub Pagesで公開されています：
 2. 左メニューから **Pages** を選択
 3. **Source** セクションで以下を設定：
    - Source: **GitHub Actions** を選択
-4. `main` ブランチ（または `claude/setup-github-pages-ayzk0`）にpushすると自動でデプロイされます
+4. `main` ブランチにpushすると自動でデプロイされます
 
 ### 手動設定（従来の方法）
 
@@ -38,7 +38,7 @@ GitHub Actionsを使用しない場合：
 
 1. GitHubリポジトリの **Settings** → **Pages** を開く
 2. **Source** セクションで以下を設定：
-   - Branch: `main` (または `claude/setup-github-pages-ayzk0`)
+   - Branch: `main`
    - Folder: `/docs`
 3. **Save** をクリック
 4. 数分後、URLが生成されてサイトが公開されます
@@ -47,7 +47,7 @@ GitHub Actionsを使用しない場合：
 
 `.github/workflows/deploy.yml` にデプロイワークフローが定義されています。
 
-- **トリガー**: `main` ブランチまたは `claude/setup-github-pages-ayzk0` ブランチへのpush
+- **トリガー**: `main` ブランチへのpush
 - **手動実行**: GitHub の Actions タブから手動でワークフローを実行することも可能
 - **デプロイ先**: `docs/` ディレクトリの内容がGitHub Pagesに公開されます
 

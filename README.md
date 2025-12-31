@@ -32,22 +32,23 @@ GitHub Pagesで公開されています：
 
 ## ローカルでの確認方法
 
-### 方法1: Python の HTTP サーバー
-
-```bash
-cd docs
-python3 -m http.server 8000
-```
-
-ブラウザで `http://localhost:8000` を開く
-
-### 方法2: Node.js の HTTP サーバー
+### 方法1: Node.js の HTTP サーバー（推奨）
 
 ```bash
 npx http-server docs -p 8000
 ```
 
+または
+
+```bash
+npx serve docs -p 8000
+```
+
 ブラウザで `http://localhost:8000` を開く
+
+### 方法2: ブラウザで直接開く
+
+`docs/index.html` をブラウザで直接開くこともできますが、一部のCSP機能が正しく動作しない可能性があります。ローカルサーバーの使用を推奨します。
 
 ## CSPについて
 

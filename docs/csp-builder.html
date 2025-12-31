@@ -283,6 +283,13 @@
             'font-src', 'connect-src', 'frame-src', 'object-src'
         ];
 
+        // HTMLエスケープ関数（XSS対策）
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
         const presets = {
             strict: {
                 'default-src': "'none'",
@@ -327,11 +334,13 @@
         };
 
         // URLパラメータから設定を読み込む
+        // URLSearchParams.get()は自動的にURLデコードを行うため、安全に値を取得できます
         function loadFromURL() {
             const params = new URLSearchParams(window.location.search);
             directives.forEach(directive => {
                 const value = params.get(directive);
                 if (value) {
+                    // URLSearchParamsが自動的にデコードした値を使用
                     document.getElementById(directive).value = value;
                 }
             });
@@ -376,11 +385,14 @@
         }
 
         // URLを生成・更新
+        // URLSearchParams.set()は自動的にURLエンコードを行うため、
+        // 'self', https:// などの特殊文字も安全にパラメータ化できます
         function updateURL() {
             const params = new URLSearchParams();
             directives.forEach(directive => {
                 const value = document.getElementById(directive).value.trim();
                 if (value) {
+                    // URLSearchParamsが自動的にエンコードして安全なURLパラメータに変換
                     params.set(directive, value);
                 }
             });
@@ -389,8 +401,9 @@
             window.history.pushState({}, '', newURL);
 
             const fullURL = window.location.origin + newURL;
+            // HTMLエスケープしてXSSを防止
             document.getElementById('generated-url').innerHTML =
-                `<strong>生成されたURL:</strong><br><code style="background: #fff; padding: 5px; display: block; margin-top: 5px; word-break: break-all;">${fullURL}</code>`;
+                `<strong>生成されたURL:</strong><br><code style="background: #fff; padding: 5px; display: block; margin-top: 5px; word-break: break-all;">${escapeHTML(fullURL)}</code>`;
 
             alert('URLが更新されました！このURLをブックマークして再利用できます。');
         }
@@ -403,13 +416,16 @@
                 return;
             }
 
+            // HTMLエスケープしてXSSを防止
+            const escapedPolicy = escapeHTML(policy);
+
             // テストページのHTMLを生成
             const testHTML = `<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="${policy}">
+    <meta http-equiv="Content-Security-Policy" content="${escapedPolicy}">
     <title>CSP Test Page</title>
     <style>
         body {
@@ -442,7 +458,7 @@
 
     <div class="policy-box">
         <h3>適用されたCSPポリシー</h3>
-        <code style="display: block; word-break: break-all;">${policy}</code>
+        <code style="display: block; word-break: break-all;">${escapedPolicy}</code>
     </div>
 
     <div class="test-section success">

@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'">
+    <title>CSP Builder - URLパラメータでCSP設定</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .container {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .directive-group {
+            margin: 15px 0;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border-left: 4px solid #2196F3;
+        }
+        .directive-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        .directive-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .directive-group .hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .result-box {
+            background-color: #fff3cd;
+            border: 2px solid #ff9800;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .result-box h3 {
+            margin-top: 0;
+        }
+        .policy-output {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            word-break: break-all;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+        .btn-secondary {
+            background-color: #2196F3;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #0b7dda;
+        }
+        .btn-copy {
+            background-color: #ff9800;
+            color: white;
+        }
+        .btn-copy:hover {
+            background-color: #e68900;
+        }
+        .presets {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+        .preset-btn {
+            padding: 8px 16px;
+            background-color: #e0e0e0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .preset-btn:hover {
+            background-color: #d0d0d0;
+        }
+        .info-box {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            color: #2196F3;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .common-values {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .value-chip {
+            padding: 4px 10px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            font-size: 12px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+        }
+        .value-chip:hover {
+            background-color: #d0d0d0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 CSP Builder - URLパラメータでCSP設定</h1>
+
+    <div class="info-box">
+        <strong>📋 使い方：</strong>
+        <p style="margin: 8px 0 0 0;">
+            各ディレクティブの値を入力して「URLを生成」をクリックすると、設定を反映したURLパラメータが生成されます。
+            「テストページを開く」で、そのCSP設定を適用したページを新しいウィンドウで開きます。
+        </p>
+    </div>
+
+    <div class="container">
+        <h2>プリセット</h2>
+        <div class="presets">
+            <button class="preset-btn" onclick="loadPreset('strict')">🔒 Strict (default-src 'none')</button>
+            <button class="preset-btn" onclick="loadPreset('self')">🏠 Self Only</button>
+            <button class="preset-btn" onclick="loadPreset('development')">🛠️ Development (unsafe-inline)</button>
+            <button class="preset-btn" onclick="loadPreset('cdn')">🌐 CDN Allowed</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>CSP ディレクティブ設定</h2>
+        <p style="color: #666; font-size: 14px;">値はスペース区切りで入力してください（例: 'self' 'unsafe-inline' https://cdn.example.com）</p>
+
+        <div class="directive-group">
+            <label for="default-src">default-src</label>
+            <input type="text" id="default-src" placeholder="例: 'self'" />
+            <div class="hint">すべてのリソースタイプのデフォルト設定</div>
+            <div class="common-values">
+                <span class="value-chip" onclick="addValue('default-src', \"'none'\")">none</span>
+                <span class="value-chip" onclick="addValue('default-src', \"'self'\")">self</span>
+            </div>
+        </div>
+
+        <div class="directive-group">
+            <label for="script-src">script-src</label>
+            <input type="text" id="script-src" placeholder="例: 'self' 'unsafe-inline'" />
+            <div class="hint">JavaScriptの読み込み元を制御</div>
+            <div class="common-values">
+                <span class="value-chip" onclick="addValue('script-src', \"'self'\")">self</span>
+                <span class="value-chip" onclick="addValue('script-src', \"'unsafe-inline'\")">unsafe-inline</span>
+                <span class="value-chip" onclick="addValue('script-src', \"'unsafe-eval'\")">unsafe-eval</span>
+            </div>
+        </div>
+
+        <div class="directive-group">
+            <label for="style-src">style-src</label>
+            <input type="text" id="style-src" placeholder="例: 'self' 'unsafe-inline'" />
+            <div class="hint">CSSの読み込み元を制御</div>
+            <div class="common-values">
+                <span class="value-chip" onclick="addValue('style-src', \"'self'\")">self</span>
+                <span class="value-chip" onclick="addValue('style-src', \"'unsafe-inline'\")">unsafe-inline</span>
+            </div>
+        </div>
+
+        <div class="directive-group">
+            <label for="img-src">img-src</label>
+            <input type="text" id="img-src" placeholder="例: 'self' data: https:" />
+            <div class="hint">画像の読み込み元を制御</div>
+            <div class="common-values">
+                <span class="value-chip" onclick="addValue('img-src', \"'self'\")">self</span>
+                <span class="value-chip" onclick="addValue('img-src', 'data:')">data:</span>
+                <span class="value-chip" onclick="addValue('img-src', 'https:')">https:</span>
+            </div>
+        </div>
+
+        <div class="directive-group">
+            <label for="font-src">font-src</label>
+            <input type="text" id="font-src" placeholder="例: 'self' https://fonts.gstatic.com" />
+            <div class="hint">フォントの読み込み元を制御</div>
+            <div class="common-values">
+                <span class="value-chip" onclick="addValue('font-src', \"'self'\")">self</span>
+                <span class="value-chip" onclick="addValue('font-src', 'data:')">data:</span>
+            </div>
+        </div>
+
+        <div class="directive-group">
+            <label for="connect-src">connect-src</label>
+            <input type="text" id="connect-src" placeholder="例: 'self' https://api.example.com" />
+            <div class="hint">fetch, XHR, WebSocketの接続先を制御</div>
+            <div class="common-values">
+                <span class="value-chip" onclick="addValue('connect-src', \"'self'\")">self</span>
+            </div>
+        </div>
+
+        <div class="directive-group">
+            <label for="frame-src">frame-src</label>
+            <input type="text" id="frame-src" placeholder="例: 'self' https://www.youtube.com" />
+            <div class="hint">iframe の読み込み元を制御</div>
+            <div class="common-values">
+                <span class="value-chip" onclick="addValue('frame-src', \"'self'\")">self</span>
+                <span class="value-chip" onclick="addValue('frame-src', \"'none'\")">none</span>
+            </div>
+        </div>
+
+        <div class="directive-group">
+            <label for="object-src">object-src</label>
+            <input type="text" id="object-src" placeholder="例: 'none'" />
+            <div class="hint">&lt;object&gt;, &lt;embed&gt;, &lt;applet&gt; の制御（通常は 'none' 推奨）</div>
+            <div class="common-values">
+                <span class="value-chip" onclick="addValue('object-src', \"'none'\")">none</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="result-box">
+        <h3>🔍 生成されたCSPポリシー</h3>
+        <div class="policy-output" id="policy-output">（ディレクティブを入力してください）</div>
+        <div class="button-group">
+            <button class="btn-primary" onclick="updateURL()">📝 URLを生成</button>
+            <button class="btn-secondary" onclick="openTestPage()">🚀 テストページを開く</button>
+            <button class="btn-copy" onclick="copyPolicy()">📋 ポリシーをコピー</button>
+        </div>
+        <div id="generated-url" style="margin-top: 15px; font-size: 13px; color: #666;"></div>
+    </div>
+
+    <a href="index.html" class="back-link">← トップページに戻る</a>
+
+    <script>
+        const directives = [
+            'default-src', 'script-src', 'style-src', 'img-src',
+            'font-src', 'connect-src', 'frame-src', 'object-src'
+        ];
+
+        const presets = {
+            strict: {
+                'default-src': "'none'",
+                'script-src': '',
+                'style-src': '',
+                'img-src': '',
+                'font-src': '',
+                'connect-src': '',
+                'frame-src': '',
+                'object-src': "'none'"
+            },
+            self: {
+                'default-src': "'self'",
+                'script-src': '',
+                'style-src': '',
+                'img-src': '',
+                'font-src': '',
+                'connect-src': '',
+                'frame-src': '',
+                'object-src': "'none'"
+            },
+            development: {
+                'default-src': "'self'",
+                'script-src': "'self' 'unsafe-inline' 'unsafe-eval'",
+                'style-src': "'self' 'unsafe-inline'",
+                'img-src': "'self' data: https:",
+                'font-src': "'self' data:",
+                'connect-src': "'self'",
+                'frame-src': "'self'",
+                'object-src': "'none'"
+            },
+            cdn: {
+                'default-src': "'self'",
+                'script-src': "'self' https://cdn.jsdelivr.net",
+                'style-src': "'self' https://fonts.googleapis.com",
+                'img-src': "'self' data: https:",
+                'font-src': "'self' https://fonts.gstatic.com",
+                'connect-src': "'self'",
+                'frame-src': "'self'",
+                'object-src': "'none'"
+            }
+        };
+
+        // URLパラメータから設定を読み込む
+        function loadFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            directives.forEach(directive => {
+                const value = params.get(directive);
+                if (value) {
+                    document.getElementById(directive).value = value;
+                }
+            });
+            generatePolicy();
+        }
+
+        // プリセットを読み込む
+        function loadPreset(presetName) {
+            const preset = presets[presetName];
+            directives.forEach(directive => {
+                document.getElementById(directive).value = preset[directive] || '';
+            });
+            generatePolicy();
+        }
+
+        // 値を追加（既存の値に追加）
+        function addValue(directive, value) {
+            const input = document.getElementById(directive);
+            const current = input.value.trim();
+            if (current && !current.split(/\s+/).includes(value)) {
+                input.value = current + ' ' + value;
+            } else if (!current) {
+                input.value = value;
+            }
+            generatePolicy();
+        }
+
+        // CSPポリシーを生成
+        function generatePolicy() {
+            const parts = [];
+            directives.forEach(directive => {
+                const value = document.getElementById(directive).value.trim();
+                if (value) {
+                    parts.push(`${directive} ${value}`);
+                }
+            });
+
+            const policy = parts.join('; ');
+            document.getElementById('policy-output').textContent =
+                policy || '（ディレクティブを入力してください）';
+            return policy;
+        }
+
+        // URLを生成・更新
+        function updateURL() {
+            const params = new URLSearchParams();
+            directives.forEach(directive => {
+                const value = document.getElementById(directive).value.trim();
+                if (value) {
+                    params.set(directive, value);
+                }
+            });
+
+            const newURL = window.location.pathname + '?' + params.toString();
+            window.history.pushState({}, '', newURL);
+
+            const fullURL = window.location.origin + newURL;
+            document.getElementById('generated-url').innerHTML =
+                `<strong>生成されたURL:</strong><br><code style="background: #fff; padding: 5px; display: block; margin-top: 5px; word-break: break-all;">${fullURL}</code>`;
+
+            alert('URLが更新されました！このURLをブックマークして再利用できます。');
+        }
+
+        // テストページを開く
+        function openTestPage() {
+            const policy = generatePolicy();
+            if (!policy) {
+                alert('少なくとも1つのディレクティブを設定してください');
+                return;
+            }
+
+            // テストページのHTMLを生成
+            const testHTML = `<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="${policy}">
+    <title>CSP Test Page</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .policy-box {
+            background-color: #fff3cd;
+            border: 2px solid #ff9800;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .test-section {
+            background-color: #fff;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .success { border-left: 4px solid #4CAF50; }
+        .error { border-left: 4px solid #f44336; }
+    </style>
+</head>
+<body>
+    <h1>🔒 CSP Test Page</h1>
+
+    <div class="policy-box">
+        <h3>適用されたCSPポリシー</h3>
+        <code style="display: block; word-break: break-all;">${policy}</code>
+    </div>
+
+    <div class="test-section success">
+        <h3>✅ このスタイルが表示されている場合</h3>
+        <p>&lt;style&gt;タグのCSSが許可されています</p>
+    </div>
+
+    <div class="test-section error" id="inline-style-test" style="color: red; font-weight: bold;">
+        <h3>インラインstyle属性のテスト</h3>
+        <p>このテキストが赤色・太字の場合、インラインスタイルが許可されています</p>
+    </div>
+
+    <div class="test-section" id="inline-script-test">
+        <h3>❌ インラインスクリプトのテスト</h3>
+        <p>このメッセージが表示されている場合、インラインスクリプトがブロックされています</p>
+    </div>
+
+    <div class="test-section">
+        <h3>🔍 確認方法</h3>
+        <ol>
+            <li>ブラウザの開発者ツール（F12）を開く</li>
+            <li>Consoleタブを確認</li>
+            <li>CSP違反のエラーメッセージを確認</li>
+        </ol>
+    </div>
+
+    <!-- このインラインスクリプトはブロックされる可能性がある -->
+    <script>
+        console.log('インラインスクリプトが実行されました');
+        document.getElementById('inline-script-test').className = 'test-section success';
+        document.getElementById('inline-script-test').innerHTML =
+            '<h3>✅ インラインスクリプトのテスト</h3>' +
+            '<p>このメッセージが表示されている場合、インラインスクリプトが許可されています</p>';
+    </script>
+
+    <!-- インラインイベントハンドラのテスト -->
+    <div class="test-section">
+        <h3>インラインイベントハンドラのテスト</h3>
+        <button onclick="alert('クリックされました')">クリックテスト</button>
+        <p style="font-size: 13px; color: #666;">アラートが表示される場合、インラインイベントハンドラが許可されています</p>
+    </div>
+</body>
+</html>`;
+
+            // Blob URLを作成して新しいウィンドウで開く
+            const blob = new Blob([testHTML], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+
+            // メモリリークを防ぐため、少し待ってからURLを解放
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+
+        // ポリシーをクリップボードにコピー
+        function copyPolicy() {
+            const policy = generatePolicy();
+            if (!policy) {
+                alert('コピーするポリシーがありません');
+                return;
+            }
+
+            navigator.clipboard.writeText(policy).then(() => {
+                alert('CSPポリシーをクリップボードにコピーしました！');
+            }).catch(err => {
+                console.error('コピーに失敗しました:', err);
+                alert('コピーに失敗しました');
+            });
+        }
+
+        // 入力時にリアルタイムでポリシーを更新
+        directives.forEach(directive => {
+            document.getElementById(directive).addEventListener('input', generatePolicy);
+        });
+
+        // ページ読み込み時にURLパラメータから設定を読み込む
+        window.addEventListener('load', loadFromURL);
+    </script>
+</body>
+</html>

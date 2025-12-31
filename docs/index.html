@@ -74,33 +74,15 @@
     <h2>テストページ一覧</h2>
     <ul class="test-list">
         <li class="test-item">
-            <a href="csp-inline-script.html">インラインスクリプトのテスト</a>
+            <a href="csp-default-none.html">default-src 'none' のテスト</a>
             <div class="test-description">
-                インラインスクリプトがCSPによってブロックされる動作を確認
+                すべてのリソース読み込みをブロックする最も厳格なポリシー
             </div>
         </li>
         <li class="test-item">
-            <a href="csp-external-script.html">外部スクリプトのテスト</a>
+            <a href="csp-default-self.html">default-src 'self' のテスト</a>
             <div class="test-description">
-                外部ドメインからのスクリプト読み込みがブロックされる動作を確認
-            </div>
-        </li>
-        <li class="test-item">
-            <a href="csp-nonce.html">Nonce使用のテスト</a>
-            <div class="test-description">
-                nonceを使用したインラインスクリプトの許可を確認
-            </div>
-        </li>
-        <li class="test-item">
-            <a href="csp-style.html">インラインスタイルのテスト</a>
-            <div class="test-description">
-                インラインスタイルがCSPによってブロックされる動作を確認
-            </div>
-        </li>
-        <li class="test-item">
-            <a href="csp-report-only.html">Report-Onlyモードのテスト</a>
-            <div class="test-description">
-                CSPの違反をレポートするが実行はブロックしないモードを確認
+                同一オリジンからのリソースのみ許可する基本的なポリシー
             </div>
         </li>
     </ul>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'">
+    <title>CSP - default-src 'none' テスト</title>
+</head>
+<body>
+    <h1>default-src 'none' テスト</h1>
+
+    <div>
+        <h2>CSPポリシー</h2>
+        <code>Content-Security-Policy: default-src 'none'</code>
+        <p>
+            このページではすべてのリソースの読み込みが<strong>ブロック</strong>されます。
+        </p>
+    </div>
+
+    <div>
+        <h3>結果</h3>
+        <p>スタイルが適用されていない場合、CSPが正しく機能しています。</p>
+        <p>このページは素のHTMLのみで表示されているはずです。</p>
+    </div>
+
+    <div>
+        <h3>ブロックされるもの</h3>
+        <ul>
+            <li>スタイルシート（インライン・外部）</li>
+            <li>JavaScript（インライン・外部）</li>
+            <li>画像</li>
+            <li>フォント</li>
+            <li>その他すべてのリソース</li>
+        </ul>
+    </div>
+
+    <div>
+        <h3>確認方法</h3>
+        <ol>
+            <li>ブラウザの開発者ツールを開く（F12キー）</li>
+            <li>Consoleタブを確認</li>
+            <li>CSP違反のエラーメッセージが表示されているか確認</li>
+        </ol>
+    </div>
+
+    <p><a href="index.html">← トップページに戻る</a></p>
+
+    <!-- このスタイルはブロックされる -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: red;
+        }
+    </style>
+
+    <!-- このスクリプトもブロックされる -->
+    <script>
+        console.log('このメッセージは表示されません（CSPによってブロック）');
+        alert('このアラートは表示されません');
+    </script>
+</body>
+</html>

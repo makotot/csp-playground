@@ -14,11 +14,8 @@ GitHub Pagesで公開されています：
 ## テストページ一覧
 
 - **index.html** - メインページ（全テストページへのリンク）
-- **csp-inline-script.html** - インラインスクリプトのブロックテスト
-- **csp-external-script.html** - 外部スクリプトのブロックテスト
-- **csp-nonce.html** - Nonce を使用したスクリプト許可のテスト
-- **csp-style.html** - インラインスタイルのブロックテスト
-- **csp-report-only.html** - Report-Only モードのテスト
+- **csp-default-none.html** - `default-src 'none'` のテスト（すべてのリソースをブロック）
+- **csp-default-self.html** - `default-src 'self'` のテスト（同一オリジンのみ許可）
 
 ## GitHub Pages の設定方法
 
